@@ -1,0 +1,12 @@
+{
+	"servers": {
+		"vault-mcp": {
+			"type": "stdio",
+			"command": "python",
+			"args": ["-m", "vault_mcp.server"],
+			"env": {
+				"VAULT_ROOT": "${workspaceFolder}/example-vault"
+			}
+		}
+	}
+}

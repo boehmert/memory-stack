@@ -1,0 +1,59 @@
+flowchart LR
+    subgraph LAYERS[" "]
+        direction TB
+
+        subgraph SHORT["<b>SHORT-TERM MEMORY</b> — ephemeral"]
+            CW["Context Window\n~128k tokens\nDies with the session"]
+            SM["/memories/session/*\nCurrent conversation only"]
+        end
+
+        subgraph MID["<b>MEDIUM-TERM MEMORY</b> — persistent across sessions"]
+            UM["/memories/*\nUser Memory\nFirst 200 lines auto-injected"]
+            AC["active-context.md\nWork state between sessions"]
+            MM["*-memory.md\nTool patterns, MCP quirks"]
+        end
+
+        subgraph LONG["<b>LONG-TERM MEMORY</b> — external knowledge base"]
+            READ["vault_search · vault_get · vault_related\nvault_list · vault_context"]
+            WT["vault_write"]
+            VF["Obsidian Vault\nKnowledge Distillates"]
+        end
+
+        SHORT ~~~ MID
+        MID ~~~ LONG
+    end
+
+    subgraph ACTIONS["<b>WRITE ACTIONS</b>"]
+        direction TB
+        SS["/save-session"]
+        REM["/remember"]
+        VWR["/vault-write"]
+        VIN["/vault-ingest"]
+        SS ~~~ REM
+        REM ~~~ VWR
+        VWR ~~~ VIN
+    end
+
+    %% Read flows
+    CW -.->|"auto-inject"| UM
+    CW -.->|"manual read"| AC
+    CW -.->|"manual read"| MM
+    CW -.->|"MCP call"| READ
+
+    %% Vault access
+    READ -->|"read"| VF
+    WT -->|"write"| VF
+
+    %% Write actions to artifacts
+    SS -->|"update"| AC
+    SS -->|"extract"| REM
+    SS -.->|"suggest"| VWR
+    REM -->|"append"| MM
+    VWR -->|"MCP"| WT
+    VIN -->|"MCP"| WT
+
+    classDef shortterm fill:#fff3cd,stroke:#ffc107,color:#000
+    classDef midterm fill:#d1ecf1,stroke:#17a2b8,color:#000
+    classDef longterm fill:#d4edda,stroke:#28a745,color:#000
+    classDef tool fill:#e2d9f3,stroke:#6f42c1,color:#000
+    classDef action fill:#f8d7da,stroke:#dc3545,color:#000
