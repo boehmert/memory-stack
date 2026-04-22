@@ -4,7 +4,9 @@
 
 GitHub Copilot's context window resets with every new chat session. This repository provides a working pattern to give your AI agent **short-term, medium-term, and long-term memory** — so it remembers decisions, patterns, and domain knowledge across sessions.
 
-![Memory Stack Architecture](assets/memory-stack.png)
+<p align="center">
+  <img src="assets/memory-stack.png" alt="Memory Stack Architecture" width="100%">
+</p>
 
 ## The Problem
 
